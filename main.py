@@ -4,7 +4,7 @@ import pygame
 import numpy as np
 import math
 import random
-
+import visualize
 from pygame import draw
 from classes.bodies import Body, Rocket, Planet
 pygame.init()
@@ -79,6 +79,7 @@ def eval_genomes(genomes, config):
 
         # DRAWING
         SCREEN.fill((255, 255, 255))
+
         draw_orbits()
         earth.update()
         earth.draw(SCREEN)
@@ -123,15 +124,18 @@ def run(config_path):
     )
 
     pop = neat.Population(config)
-    # pop = neat.Checkpointer.restore_checkpoint("/Users/allengu/Documents/hohmann-transfer/runs/06-02-2021-20-10/neat-checkpoint-49")
-    pop = neat.Checkpointer.restore_checkpoint("/Users/allengu/Documents/hohmann-transfer/neat-checkpoint-43")
+    pop = neat.Checkpointer.restore_checkpoint("/Users/allengu/Documents/hohmann-transfer/runs/06-02-2021-20-36/neat-checkpoint-0")
+    # pop = neat.Checkpointer.restore_checkpoint("/Users/allengu/Documents/hohmann-transfer/neat-checkpoint-43")
     pop.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     pop.add_reporter(stats)
     pop.add_reporter(neat.Checkpointer(1))
-    best = pop.run(eval_genomes, 1)
+    best = pop.run(eval_genomes, 40)
     # eval_genomes(list(zip([1, 2, 3], stats.best_genomes(3))), config)
     eval_genomes([(1, stats.best_genome())], config)
+    visualize.draw_net(config, best, True)
+    visualize.plot_stats(stats, ylog=False, view=True)
+    visualize.plot_species(stats, view=True)
 
 
 if __name__ == '__main__':
